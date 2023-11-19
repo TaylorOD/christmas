@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Christmas Scene with p5.js</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+</head>
+
+<body>
+  <script>
+    let gifts = [];
+    let lastGiftToggle = 0;
+
+    function setup() {
+      createCanvas(windowWidth, windowHeight);
+      background(30, 30, 30); // Set the background once
+      initializeGifts();
+    }
+
+    function draw() {
+      drawSnowflakes();
+      if (millis() - lastGiftToggle > 3000) {
+        toggleGiftVisibility();
+        lastGiftToggle = millis();
+      }
+      drawChristmasTree();
+      drawGifts();
+    }
+
+    function initializeGifts() {
+        for (let i = 0; i < 15; i++) {
+          gifts.push({
+            x: random(width / 2 - 325, width / 2 + 325),
+            y: height - 325 + random(-20, 40),
+            w: random(40, 120),
+            h: random(60, 150),
+            color: color(random(255), random(100), random(100)),
+            visible: true
+          });
+        }
+      }
+
+    function drawSnowflakes() {
+      fill(255);
+      noStroke();
+      for (let i = 0; i < random(5); i++) {
+        ellipse(random(width), random(height), 5, 5);
+      }
+    }
+
+  function drawChristmasTree() {
+    let treeWidth = 800;
+    let treeHeight = 800;
+    let treeX = width / 2;
+    let treeY = height - treeHeight / 2 - 30;
+
+    // Drawing the tree with multiple layers
+    fill(25, 130, 35);
+    for (let i = 0; i < treeHeight; i += 40) {
+      let layerWidth = treeWidth * (1 - i / treeHeight);
+      triangle(treeX, treeY - i, treeX - layerWidth / 2, treeY - i + 40, treeX + layerWidth / 2, treeY - i + 40);
+    }
+
+    // Flickering lights on the tree
+    drawLights(treeX, treeY, treeWidth, treeHeight);
+
+    // Constant star on top
+    fill(255, 204, 0);
+    star(treeX, treeY - treeHeight, 15, 30, 5);
+
+    // Drawing the tree trunk
+    fill(101, 67, 33); // Brown color for the trunk
+    let trunkWidth = treeWidth * 0.1; // Trunk width is 10% of the tree width
+    let trunkHeight = treeHeight * 0.1; // Trunk height is 10% of the tree height
+    rect(treeX - trunkWidth / 2, treeY + 35, trunkWidth, trunkHeight);
+  }
+
+
+  function drawLights(treeX, treeY, treeWidth, treeHeight) {
+    for (let layer = 0; layer < treeHeight; layer += 40) {
+      let layerWidth = treeWidth * (1 - layer / treeHeight);
+      for (let i = 0; i < 5; i++) { // Number of lights per layer
+        let x = random(treeX - layerWidth / 2, treeX + layerWidth / 2);
+        let y;
+        if (random() < 0.5) {
+          // 50% chance to place the light slightly above the current branch
+          y = random(treeY - layer - 20, treeY - layer - 40);
+        } else {
+          // 50% chance to place the light within the branch
+          y = random(treeY - layer, treeY - layer - 40);
+        }
+        fill(random(255), random(255), random(255));
+        ellipse(x, y, 5, 5);
+      }
+    }
+  }
+
+    function toggleGiftVisibility() {
+      gifts.forEach(gift => {
+        gift.visible = !gift.visible;
+      });
+    }
+
+    function drawGifts() {
+      gifts.forEach(gift => {
+        if (gift.visible) {
+          fill(gift.color);
+          rect(gift.x, gift.y, gift.w, gift.h);
+        }
+      });
+    }
+
+    function star(x, y, radius1, radius2, npoints) {
+      let angle = TWO_PI / npoints;
+      let halfAngle = angle / 2.0;
+      beginShape();
+      for (let i = 0; i < TWO_PI; i += angle) {
+        let sx = x + cos(i) * radius2;
+        let sy = y + sin(i) * radius2;
+        vertex(sx, sy);
+        sx = x + cos(i + halfAngle) * radius1;
+        sy = y + sin(i + halfAngle) * radius1;
+        vertex(sx, sy);
+      }
+      endShape(CLOSE);
+    }
+  </script>
+</body>
+
+</html>
+
